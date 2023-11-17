@@ -35,5 +35,13 @@ namespace MarwanZaky
             // go.transform.rotation = Quaternion.Euler(90, 100, 110);
             Destroy(gameObject);
         }
+
+        void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Enemy"))
+            {
+                Destroy(other.gameObject);
+            }
+        }
     }
 }

@@ -45,6 +45,7 @@ namespace MarwanZaky
 
         public GameObject cursor;
         public Vector3 posY;
+        public HealthManager healthManager;
         private void Start()
         {
             Cursor.lockState = cursorLockMode;
@@ -53,6 +54,8 @@ namespace MarwanZaky
             cam = Camera.main.transform;
 
             UpdateCurrentController(0);     // select default controller
+
+
         }
 
         private void OnEnable()
@@ -110,6 +113,11 @@ namespace MarwanZaky
             if (Input.GetKeyDown(KeyCode.R))
             {
                 //Reload
+                for(int i=healthManager.currentAmmo; i<10; i++)
+                {
+                    healthManager.currentAmmo++;
+                    healthManager.reloadBullet--;
+                }
             }
 
             if (Input.GetKeyDown(KeyCode.Q))
@@ -142,7 +150,14 @@ namespace MarwanZaky
                 Jump();
 
             if (Input.GetKeyDown(attackKeyCode))
-                Attack();
+            {
+                if(healthManager.currentAmmo > 0 ) 
+                {
+                    Attack();
+                }
+               
+            }
+               
 
             // Scroll between controllers
             if (Input.GetAxis("Mouse ScrollWheel") > 0f)
@@ -206,6 +221,9 @@ namespace MarwanZaky
         {
             animator.SetTrigger("Attack");
             OnAttack?.Invoke();
+            if(currentController == 2)
+                healthManager.currentAmmo--;
+
         }
 
         private void ToggleCursorLockState()

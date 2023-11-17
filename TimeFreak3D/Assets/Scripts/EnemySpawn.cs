@@ -8,7 +8,7 @@ public class EnemySpawn : MonoBehaviour
 {
 
     [SerializeField]
-    private GameObject prefab;
+    private GameObject[] enemies;
 
     [SerializeField]
     private int spawnCount = 10;
@@ -42,10 +42,10 @@ public class EnemySpawn : MonoBehaviour
         for (int count = spawnCount; count > 0; --count)
         {
             randomSpawnPoint = Random.Range(0, spawnPoints.Length);
-            GameObject clone = Instantiate(prefab, spawnPoints[randomSpawnPoint], Quaternion.identity);
+            int randomSpawnEnemy = Random.Range(0, enemies.Length);
+            GameObject clone = Instantiate(enemies[randomSpawnEnemy], spawnPoints[randomSpawnPoint], Quaternion.identity);
 
             // Detect when an ennemy gets destroyed
-
 
             remainingEnemies++;
 
