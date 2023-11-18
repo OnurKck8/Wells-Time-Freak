@@ -12,6 +12,8 @@ public class FollowTarget : MonoBehaviour
     public string characterName;
     public GameObject magic;
     float timer = 0;
+    float distance;
+
     void Start(){
         rb = GetComponent<Rigidbody>();
         if (player == null)
@@ -32,7 +34,7 @@ public class FollowTarget : MonoBehaviour
     {
         if (player.GetComponent<HealthManager>().isGameOver == false)
         {
-            float distance = Vector3.Distance(gameObject.transform.position, player.transform.position);
+             distance = Vector3.Distance(gameObject.transform.position, player.transform.position);
 
             if (characterName == "Barbar")
             {
@@ -104,8 +106,9 @@ public class FollowTarget : MonoBehaviour
             Destroy(gameObject, 0.15f);
             gameObject.GetComponent<Rigidbody>().AddExplosionForce(5f, Vector3.up, 0.5f);
         }
-            
+
     }
+
 }
 
 
