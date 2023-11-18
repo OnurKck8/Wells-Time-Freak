@@ -17,6 +17,7 @@ public class StackObject : MonoBehaviour
             if(gameObject.name != "HealthBox")
             {
                 characterStack.AddNewItem(this.transform);
+                GetComponent<Collider>().enabled = false;
             }
         }
     }

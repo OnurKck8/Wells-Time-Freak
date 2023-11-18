@@ -9,7 +9,7 @@ namespace MarwanZaky
     {
         public Transform[] ItemHolderTransform;
         public int numOfItemsHolding;
-
+        public List<GameObject> enemy;
         void Update()
         {
             if (isGameOver == false)
@@ -40,6 +40,12 @@ namespace MarwanZaky
             if (isGameOver)
             {
                 Time.timeScale = 0.25f;
+                for(int i = 0; i < enemy.Count; i++)
+                {
+                    enemy[i].gameObject.GetComponent<FollowTarget>().moveSpeed = 0;
+                    enemy[i].gameObject.GetComponent<Animator>().enabled = false;
+
+                }
 
             }
 

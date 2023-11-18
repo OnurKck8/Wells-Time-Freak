@@ -13,7 +13,7 @@ public class FollowTarget : MonoBehaviour
     public GameObject magic;
     float timer = 0;
     float distance;
-
+    bool istouched;
     void Start(){
         rb = GetComponent<Rigidbody>();
         if (player == null)
@@ -40,13 +40,18 @@ public class FollowTarget : MonoBehaviour
             {
                 if (distance <= 2f)
                 {
+                    
                     myAnim.SetBool("Attack", true);
                     moveSpeed = 0f;
                 }
-                else
+                if(distance>2 && istouched==false)
                 {
-                    myAnim.SetBool("Attack", false);
+                    myAnim.SetBool("Attack", false);                   
                     moveSpeed = 5f;
+                }
+                if (distance > 2 &&istouched == true)
+                {
+                    moveSpeed = 0;
                 }
             }
 
@@ -76,7 +81,7 @@ public class FollowTarget : MonoBehaviour
         }
         else
         {
-            moveSpeed = 2.5f;
+            moveSpeed = 0;
             return;
         }
     }
@@ -106,9 +111,24 @@ public class FollowTarget : MonoBehaviour
             Destroy(gameObject, 0.15f);
             gameObject.GetComponent<Rigidbody>().AddExplosionForce(5f, Vector3.up, 0.5f);
         }
-
+       
+        
     }
-
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            istouched = true;
+        }
+    }
+    public void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            istouched = false;
+        }
+    }
+  
 }
 
 

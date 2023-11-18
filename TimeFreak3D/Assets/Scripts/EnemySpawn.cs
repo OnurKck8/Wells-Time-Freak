@@ -58,7 +58,7 @@ public class EnemySpawn : MonoBehaviour
             randomSpawnPoint = Random.Range(0, spawnPoints.Length);
             int randomSpawnEnemy = Random.Range(0, enemies.Length);
             GameObject clone = Instantiate(enemies[randomSpawnEnemy], spawnPoints[randomSpawnPoint], Quaternion.identity);
-
+            player.GetComponent<StackManager>().enemy.Add(clone);
             // Detect when an ennemy gets destroyed
 
             remainingEnemies++;
