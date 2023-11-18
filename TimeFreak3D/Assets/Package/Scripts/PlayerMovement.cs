@@ -38,6 +38,7 @@ namespace MarwanZaky
         [Header("Controlls"), SerializeField] KeyCode jumpKeyCode = KeyCode.Space;
         [SerializeField] KeyCode runKeyCode = KeyCode.LeftShift;
         [SerializeField] KeyCode attackKeyCode = KeyCode.Mouse0;
+        [SerializeField] KeyCode granadeKeyCode = KeyCode.Mouse1;
 
         public float Speed => IsRunning ? runSpeed : walkSpeed;
         public bool IsRunning => Input.GetKey(runKeyCode);
@@ -45,7 +46,11 @@ namespace MarwanZaky
 
         public GameObject cursor;
         public Vector3 posY;
-        public HealthManager healthManager;
+
+        public StackManager healthManager;
+        public GameObject grenadeObject;
+        public float launchSpeed = 10f;
+        public int linePoints = 175;
         private void Start()
         {
             Cursor.lockState = cursorLockMode;
@@ -88,13 +93,7 @@ namespace MarwanZaky
             //    OnCurrentControllerChange?.Invoke(2);
                 
             //}
-               
-            
-
-
         }
-
-        
 
         private void Update()
         {
@@ -117,12 +116,14 @@ namespace MarwanZaky
                 {
                     healthManager.currentAmmo++;
                     healthManager.reloadBullet--;
+                    SoundManager.Instance.SoundPlay(5);
                 }
             }
 
             if (Input.GetKeyDown(KeyCode.Q))
             {
                 //Dash
+                SoundManager.Instance.SoundPlay(3);
             }
 
            
@@ -155,7 +156,18 @@ namespace MarwanZaky
                 {
                     Attack();
                 }
-               
+            }
+
+            if(Input.GetKeyDown(granadeKeyCode))
+            {
+                if(healthManager.grenadeCount>0)
+                {
+                    AttackGranade();
+                }
+                else
+                {
+                    return;
+                }
             }
                
 
@@ -178,6 +190,7 @@ namespace MarwanZaky
 
             else if (Input.GetKeyDown(KeyCode.Alpha3))
                 OnCurrentControllerChange?.Invoke(2);
+
         }
 
         private void Gravity()
@@ -207,6 +220,7 @@ namespace MarwanZaky
         {
             AudioManager.Instance.Play("Jump");
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * GRAVITY * gravityScale);
+            SoundManager.Instance.SoundPlay(2);
         }
 
         private void LookAtCamera()
@@ -221,10 +235,29 @@ namespace MarwanZaky
         {
             animator.SetTrigger("Attack");
             OnAttack?.Invoke();
+            
             if(currentController == 2)
+            {
                 healthManager.currentAmmo--;
+                SoundManager.Instance.SoundPlay(0);
+            }
+
+            else if(currentController == 1)
+            {
+                SoundManager.Instance.SoundPlay(10);
+            }
 
         }
+
+        private void AttackGranade()
+        {
+            healthManager.grenadeCount--;
+            GameObject grenade = Instantiate(grenadeObject, healthManager.ItemHolderTransform[1].transform.position, Quaternion.identity);
+            grenade.GetComponent<Rigidbody>().velocity = launchSpeed * healthManager.ItemHolderTransform[1].up;
+            grenade.GetComponent<Rigidbody>().AddForce(Vector3.forward * launchSpeed * linePoints);
+            SoundManager.Instance.SoundPlay(0);
+        }
+
 
         private void ToggleCursorLockState()
         {

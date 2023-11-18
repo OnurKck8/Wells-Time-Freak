@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-
+using MarwanZaky;
 public class EnemySpawn : MonoBehaviour
 {
 
@@ -25,10 +24,25 @@ public class EnemySpawn : MonoBehaviour
     private int remainingEnemies = 0;
     int randomSpawnPoint;
 
+    GameObject player;
+
     void Start()
     {
         StartCoroutine(SpawnObjects());
-        
+
+        if (player == null)
+        {
+            player = GameObject.Find("Third Person Player");
+            
+        }
+    }
+
+    void Update()
+    {
+        if (player.GetComponent<HealthManager>().isGameOver == true)
+            Destroy(this);
+        else
+            return;
     }
 
     private IEnumerator SpawnObjects()
