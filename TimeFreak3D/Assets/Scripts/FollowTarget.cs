@@ -30,7 +30,7 @@ public class FollowTarget : MonoBehaviour
         transform.LookAt(player.transform);
     }
 
-    public void Update()
+    void Update()
     {
         if (player.GetComponent<HealthManager>().isGameOver == false)
         {
@@ -82,6 +82,7 @@ public class FollowTarget : MonoBehaviour
         else
         {
             moveSpeed = 0;
+            myAnim.enabled = false;
             return;
         }
     }
@@ -95,7 +96,7 @@ public class FollowTarget : MonoBehaviour
             if(other.gameObject.name== "Sword")
             {
                 GameObject newParticle = Instantiate(ParticleManager.Instance.bulletParticle[1], transform.position, Quaternion.identity);
-                SoundManager.Instance.SoundPlay(2);
+                SoundManager.Instance.SoundPlay(1);
                 Destroy(newParticle, 0.40f);
             }
             else
@@ -103,12 +104,14 @@ public class FollowTarget : MonoBehaviour
                 GameObject newParticle = Instantiate(ParticleManager.Instance.bulletParticle[0], transform.position, Quaternion.identity);
                 SoundManager.Instance.SoundPlay(7);
                 Destroy(newParticle, 0.40f);
+                Destroy(other.gameObject);
             }
         }
 
         else if(other.CompareTag("Granade"))
         {
             Destroy(gameObject, 0.15f);
+            SoundManager.Instance.SoundPlay(7);
             gameObject.GetComponent<Rigidbody>().AddExplosionForce(5f, Vector3.up, 0.5f);
         }
        

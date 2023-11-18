@@ -10,8 +10,16 @@ namespace MarwanZaky
         public Transform[] ItemHolderTransform;
         public int numOfItemsHolding;
         public List<GameObject> enemy;
+        public GameObject[] portal;
+        
         void Update()
         {
+
+            if (reloadBullet <= 0)
+            {
+                reloadBullet = 0;
+            }
+
             if (isGameOver == false)
             {
                 if (grenadeCount == 0 && ItemHolderTransform[1].childCount != 0)
@@ -28,28 +36,33 @@ namespace MarwanZaky
                 if (currentAmmo == 0)
                     currentAmmo = 0;
 
-                if (healthFill.fillAmount <= 0)
+                if (healthFill.fillAmount <= 0 || currentHealth <= 0)
                 {
                     currentHealth = 0;
+                    SoundManager.Instance.SoundPlay(9);
                     isGameOver = true;
                 }
 
                 ammoText.text = currentAmmo.ToString();
                 reloadText.text = reloadBullet.ToString();
             }
+
             if (isGameOver)
             {
-                Time.timeScale = 0.25f;
-                for(int i = 0; i < enemy.Count; i++)
-                {
-                    enemy[i].gameObject.GetComponent<FollowTarget>().moveSpeed = 0;
-                    enemy[i].gameObject.GetComponent<Animator>().enabled = false;
-
-                }
-
+                Time.timeScale = 0.25f;  
             }
 
+            if (isGameOver == false && gearCount >= 6)
+            {
+                //portal için yeri aç
+                Debug.Log("Portal");
+                portal[0].SetActive(true);
+                portal[1].SetActive(true);
+                portalagitText.SetActive(true);
+            }
         }
+
+      
 
         public void AddNewItem(Transform _itemToAdd)
         {
@@ -57,7 +70,7 @@ namespace MarwanZaky
                 () =>
                 {
                     _itemToAdd.SetParent(ItemHolderTransform[ItemIndex], true);
-                    _itemToAdd.localPosition = new Vector3(0, 5f * numOfItemsHolding, 0);
+                    _itemToAdd.localPosition = new Vector3(0, 2f * numOfItemsHolding, 0);
                     _itemToAdd.localRotation = Quaternion.identity;
                     numOfItemsHolding++;
 
@@ -65,6 +78,19 @@ namespace MarwanZaky
             );
 
         }
+        public void AddNewItemGrenade(Transform _itemToAdd)
+        {
+            _itemToAdd.DOJump(ItemHolderTransform[ItemIndex].position + new Vector3(0, 0.025f, 0), 1.5f, 1, 0.25f).OnComplete(
+                () =>
+                {
+                    _itemToAdd.SetParent(ItemHolderTransform[ItemIndex], true);
+                    _itemToAdd.localPosition = new Vector3(0, 0, 0);
+                    _itemToAdd.localRotation = Quaternion.identity;
+                }
+            );
+
+        }
+
     }
 
 }

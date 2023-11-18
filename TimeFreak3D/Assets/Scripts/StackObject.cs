@@ -12,13 +12,23 @@ public class StackObject : MonoBehaviour
             if(gameObject.name == "HealthBox" && other.gameObject.GetComponent<HealthManager>().currentHealth<1)
             {
                 characterStack.AddNewItem(this.transform);
+                characterStack.numOfItemsHolding--;
             }
 
             if(gameObject.name != "HealthBox")
             {
                 characterStack.AddNewItem(this.transform);
                 GetComponent<Collider>().enabled = false;
+                characterStack.numOfItemsHolding--;
+            }
+
+            if(gameObject.name == "Grenade")
+            {
+                characterStack.AddNewItemGrenade(this.transform);
+                GetComponent<Collider>().enabled = false;
             }
         }
     }
+
+   
 }

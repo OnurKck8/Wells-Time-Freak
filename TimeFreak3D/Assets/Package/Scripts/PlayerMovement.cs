@@ -1,6 +1,6 @@
 using UnityEngine;
 using System;
-
+using DG.Tweening;
 namespace MarwanZaky
 {
     public class PlayerMovement : Character
@@ -39,6 +39,7 @@ namespace MarwanZaky
         [SerializeField] KeyCode runKeyCode = KeyCode.LeftShift;
         [SerializeField] KeyCode attackKeyCode = KeyCode.Mouse0;
         [SerializeField] KeyCode granadeKeyCode = KeyCode.Mouse1;
+        [SerializeField] KeyCode portalGear = KeyCode.KeypadEnter;
 
         public float Speed => IsRunning ? runSpeed : walkSpeed;
         public bool IsRunning => Input.GetKey(runKeyCode);
@@ -111,13 +112,15 @@ namespace MarwanZaky
 
             if (Input.GetKeyDown(KeyCode.R))
             {
-                //Reload
-                for(int i=healthManager.currentAmmo; i<10; i++)
+                if(healthManager.reloadBullet > 0)
                 {
-                    healthManager.currentAmmo++;
-                    healthManager.reloadBullet--;
-                    SoundManager.Instance.SoundPlay(5);
+                    //Reload
+                    float x = 10 - healthManager.currentAmmo;
+                    healthManager.reloadBullet -= x;
+                    healthManager.currentAmmo += x; 
+
                 }
+               
             }
 
             if (Input.GetKeyDown(KeyCode.Q))
@@ -169,7 +172,14 @@ namespace MarwanZaky
                     return;
                 }
             }
-               
+
+            if (Input.GetKeyDown(portalGear))
+            {
+                if(healthManager.gearCount==6)
+                {
+                    PutTheGear();
+                }
+            }
 
             // Scroll between controllers
             if (Input.GetAxis("Mouse ScrollWheel") > 0f)
@@ -257,7 +267,36 @@ namespace MarwanZaky
             grenade.GetComponent<Rigidbody>().AddForce(Vector3.forward * launchSpeed * linePoints);
             SoundManager.Instance.SoundPlay(0);
         }
+        private void PutTheGear()
+        {
+            healthManager.startPortal.SetActive(true);
 
+            SoundManager.Instance.SoundPlay(12);
+            GameObject newParticle = Instantiate(ParticleManager.Instance.bulletParticle[9], healthManager.gearYeri.transform.position, Quaternion.identity);
+            newParticle.transform.parent = gameObject.transform;
+            Destroy(newParticle, 0.60f);
+
+            //gear koyma ve ses gelecek
+            Transform[] children = healthManager.ItemHolderTransform[0].GetComponentsInChildren<Transform>();
+            foreach (var child in children)
+            {
+                child.transform.parent = null;
+                child.transform.SetParent(healthManager.gearYeri.transform, true);
+
+                child.transform.DOJump(healthManager.gearYeri.transform.position + new Vector3(0, 0.025f , 0), 0.5f, 1, 0.25f).OnComplete(
+             () =>
+             {
+
+                 child.transform.localPosition = new Vector3(0,0,0);
+                 child.transform.localRotation = Quaternion.identity;
+                 child.transform.SetParent(healthManager.gearYeri.transform, true);
+                 child.transform.localScale = new Vector3(0, 0, 0);
+             }
+            );
+            }
+            Destroy(healthManager.portalaGit);
+            
+        }
 
         private void ToggleCursorLockState()
         {
