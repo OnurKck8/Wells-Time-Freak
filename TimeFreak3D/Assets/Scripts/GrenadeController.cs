@@ -8,7 +8,7 @@ public class GrenadeController : MonoBehaviour
     {
         if(collision.gameObject.GetComponent<Collider>()!=null)
         {
-            if(gameObject.tag!=("Player"))
+            if(collision.gameObject.tag != "Player")
             {
                 Destroy(gameObject);
                 GameObject newParticle = Instantiate(ParticleManager.Instance.bulletParticle[3], transform.position, Quaternion.identity);
