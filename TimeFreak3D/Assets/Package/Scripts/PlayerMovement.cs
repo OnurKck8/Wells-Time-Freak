@@ -47,7 +47,7 @@ namespace MarwanZaky
 
         public GameObject cursor;
         public Vector3 posY;
-
+        public GameObject[] fight;
         public StackManager healthManager;
         public GameObject grenadeObject;
         public float launchSpeed = 10f;
@@ -102,7 +102,24 @@ namespace MarwanZaky
             Inputs();
 
             if (IsMoving)
+            {
                 LookAtCamera();
+                transform.GetChild(0).GetComponent<Animator>().SetBool("walk", true) ;
+            }
+            else
+            {
+                transform.GetChild(0).GetComponent<Animator>().SetBool("walk", false);
+            }
+            if (Input.GetKey(runKeyCode))
+            {
+                transform.GetChild(0).GetComponent<Animator>().SetBool("run", true);
+            }
+            else
+            {
+                transform.GetChild(0).GetComponent<Animator>().SetBool("run", false);
+            }
+            
+               
 
             Gravity();
             Movement();
@@ -159,6 +176,11 @@ namespace MarwanZaky
                 {
                     Attack();
                 }
+            }
+            else
+            {
+                transform.GetChild(0).GetComponent<Animator>().SetBool("Attack", false);
+                transform.GetChild(0).GetComponent<Animator>().SetBool("Sword", false);
             }
 
             if(Input.GetKeyDown(granadeKeyCode))
@@ -243,17 +265,19 @@ namespace MarwanZaky
 
         private void Attack()
         {
-            animator.SetTrigger("Attack");
+           
             OnAttack?.Invoke();
             
             if(currentController == 2)
             {
+                transform.GetChild(0).GetComponent<Animator>().SetBool("Attack", true);
                 healthManager.currentAmmo--;
                 SoundManager.Instance.SoundPlay(0);
             }
 
             else if(currentController == 1)
             {
+                transform.GetChild(0).GetComponent<Animator>().SetBool("Sword", true);
                 SoundManager.Instance.SoundPlay(10);
             }
 
@@ -309,6 +333,7 @@ namespace MarwanZaky
         {
             currentController = (currentController + 1) % controllers.Length;
             OnCurrentControllerChange?.Invoke(currentController);
+            
         }
 
         private void UsePreviousController()
@@ -318,11 +343,29 @@ namespace MarwanZaky
             else currentController = controllers.Length - 1;
 
             OnCurrentControllerChange?.Invoke(currentController);
+           
         }
 
         private void UpdateCurrentController(int currentController)
         {
             animator.runtimeAnimatorController = controllers[currentController];
+            fight[currentController].SetActive(true);
+            if (currentController == 0)
+            {
+                fight[1].SetActive(false);
+                fight[2].SetActive(false);
+            }
+            if (currentController == 1)
+            {
+                fight[0].SetActive(false);
+                fight[2].SetActive(false);
+            }
+            if (currentController == 2)
+            {
+                fight[0].SetActive(false);
+                fight[1].SetActive(false);
+            }
+
         }
 
         #endregion

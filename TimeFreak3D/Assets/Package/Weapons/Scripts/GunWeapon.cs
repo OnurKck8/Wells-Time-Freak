@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace MarwanZaky
@@ -20,7 +21,7 @@ namespace MarwanZaky
             base.Attack();
 
             if (!IsAttacking)
-                Fire();
+                StartCoroutine(wait());
         }
 
         void Fire()
@@ -38,5 +39,11 @@ namespace MarwanZaky
 
             Instantiate(bulletPrefab, laser.position, Quaternion.LookRotation(targetDir));
         }
+        IEnumerator wait()
+        {
+            yield return new WaitForSeconds(0.5f);
+            Fire();
+        }
     }
+    
 }

@@ -37,7 +37,7 @@ namespace MarwanZaky
         {
             if (other.CompareTag("Enemy"))
             {
-                currentHealth -= 0.2f;
+                currentHealth -= 0.1f;
                 healthFill.DOFillAmount(currentHealth, 0.15f);
 
                 GameObject newParticle = Instantiate(ParticleManager.Instance.bulletParticle[2], transform.position, Quaternion.identity);
